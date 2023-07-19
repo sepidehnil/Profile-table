@@ -1,14 +1,28 @@
 import ProfileInput from "./components/profile input/ProfileInput";
 import ProfileList from "./components/profiles list/ProfileList";
 import Module from "./components/module list/Module";
+import Wrapper from "./components/Helpers/Wrapper";
 import React, { useState } from "react";
 
 function App() {
   const [addInfo, setInfo] = useState("");
   const [valid, setValid] = useState(true);
-  const [clicked, setClicked] = useState(false);
+  const [error, setError] = useState("");
 
   function addInputs(enteredName, enteredAge) {
+    if (enteredAge < 0) {
+      setValid(false);
+      setError({ title: "Invalid age", message: "The age is not Valid" });
+      return;
+    }
+    if (enteredAge <= 0 && enteredName.trim().length === 0) {
+      setValid(false);
+      setError({
+        title: "Empty inputs",
+        message: "Please enter valid inputs(non empty)",
+      });
+      return;
+    }
     setInfo((prevInputs) => {
       const update = [...prevInputs];
       update.unshift({
@@ -18,9 +32,6 @@ function App() {
       });
       return update;
     });
-    if (enteredAge <= 0) {
-      setValid(false);
-    }
   }
 
   function deleteItems(infoId) {
@@ -45,25 +56,21 @@ function App() {
     ));
   }
   function handle() {
-    setClicked(true);
+    setValid(true);
   }
+
   return (
-    <div className="container">
+    <Wrapper>
       <div>
         <ProfileInput onAdd={addInputs} />
       </div>
       <div className="profile-cont">{content}</div>
       <Module
         click={handle}
-        className={
-          valid
-            ? "module hidden"
-            : "module" && clicked
-            ? "module hidden"
-            : "module"
-        }
+        className={valid ? "module hidden" : "module"}
+        error={error}
       />
-    </div>
+    </Wrapper>
   );
 }
 

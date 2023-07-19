@@ -1,34 +1,30 @@
 import "./profileInput.css";
-import { useState } from "react";
+import { useRef } from "react";
 function ProfileInput(props) {
-  const [UserNameVal, setUserName] = useState("");
-  const [ageVal, setAge] = useState("");
-  function userNameHandler(event) {
-    setUserName(event.target.value);
-  }
-  function AgeHandler(event) {
-    setAge(event.target.value);
-  }
+  // const [UserNameVal, setUserName] = useState("");
+  // const [ageVal, setAge] = useState("");
+  //refs allow us to access other dom elements
+  const nameInputRef = useRef();
+  const ageInputRef = useRef();
 
   function submitHandler(event) {
     event.preventDefault();
-    if (UserNameVal.trim().length === 0 || ageVal.trim().length === 0) {
-      return;
-    }
-    if (ageVal === 0) {
-      return;
-    }
-    props.onAdd(UserNameVal, ageVal);
+    const enteredName = nameInputRef.current.value;
+    const enteredAge = ageInputRef.current.value;
+    console.log(nameInputRef);
+    props.onAdd(enteredName, enteredAge);
+    nameInputRef.current.value = "";
+    ageInputRef.current.value = "";
   }
   return (
     <form className="form-cont" onSubmit={submitHandler}>
       <div className="form-control">
         <label className="text">Username</label>
-        <input type="text" onChange={userNameHandler} />
+        <input type="text" ref={nameInputRef} />
       </div>
       <div className="form-control">
         <label className="text">Age (Years)</label>
-        <input type="number" onChange={AgeHandler} />
+        <input type="number" ref={ageInputRef} />
       </div>
       <input type="submit" value="Add User" className="submit-btn" />
     </form>
